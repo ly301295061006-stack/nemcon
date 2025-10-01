@@ -1,0 +1,76 @@
+<div style="text-align:center; font-family:Arial,sans-serif;">
+  <h2>Trạm 3: Sân chơi bản làng – Ném còn</h2>
+  <p>Thử vận may và kỹ năng của bạn trong trò chơi ném còn ảo!</p>
+
+  <img src="https://upload.wikimedia.org/wikipedia/commons/5/56/Vietnamese_new_year_game_%28NEM_CON%29.jpg" 
+       alt="Ném còn" width="300" style="border:1px solid #ccc; border-radius:10px; margin-bottom:15px;">
+
+  <div>
+    <button onclick="throwStick()" style="padding:10px 18px; font-size:16px; cursor:pointer;">Ném còn!</button>
+  </div>
+
+  <div id="result" style="margin-top:15px; font-size:18px; font-weight:bold;"></div>
+
+  <!-- Canvas pháo hoa -->
+  <canvas id="fireworks" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;"></canvas>
+</div>
+
+<script>
+// Chơi ném còn
+function throwStick(){
+  const score = Math.floor(Math.random() * 6) + 1;
+  const messages = [
+    "Chúc bạn may mắn lần sau!",
+    "Khá rồi, cố gắng thêm lần nữa!",
+    "Tốt! Tiếp tục phát huy!",
+    "Xuất sắc! Bạn ném còn đẹp!",
+    "Rất giỏi! Điểm cao rồi!",
+    "Hoàn hảo! Bạn là cao thủ ném còn!"
+  ];
+  const resultDiv = document.getElementById("result");
+  resultDiv.innerHTML = `Điểm ném còn: ${score} → ${messages[score-1]}`;
+
+  // Nếu ném trúng điểm 6, bắn pháo hoa
+  if(score === 6){
+    launchFireworks();
+  }
+}
+
+// Pháo hoa đơn giản bằng canvas
+function launchFireworks(){
+  const canvas = document.getElementById('fireworks');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const particles = [];
+  for(let i=0;i<100;i++){
+    particles.push({
+      x: Math.random()*canvas.width,
+      y: Math.random()*canvas.height/2,
+      r: Math.random()*3+2,
+      dx: (Math.random()-0.5)*6,
+      dy: (Math.random()-0.5)*6,
+      color: `hsl(${Math.random()*360}, 100%, 50%)`
+    });
+  }
+
+  let count = 0;
+  function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(const p of particles){
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle = p.color;
+      ctx.fill();
+      p.x += p.dx;
+      p.y += p.dy;
+      p.dy += 0.05; // trọng lực nhẹ
+    }
+    count++;
+    if(count<60) requestAnimationFrame(animate);
+    else ctx.clearRect(0,0,canvas.width,canvas.height); // xóa sau 1 giây
+  }
+  animate();
+}
+</script>
